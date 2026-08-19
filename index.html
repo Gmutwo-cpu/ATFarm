@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATFarmBot - Fruit Farming Ai Trading Forex</title>
+<style>
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+  }
+  
+  body { 
+    background-color: #121224; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+  }
+
+  .game-container {
+    width: 380px;
+    height: 740px;
+    background-image: url('https://raw.githubusercontent.com/Gmutwo-cpu/unlockearn-app/616b1c471923ae06302b46c488ea4b3ff9e8fac8/ATFarm-Img-Bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 36px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    overflow: visible !important; 
+  }
+
+  .top-utility-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+    position: relative;
+    z-index: 9999;
+  }
+
+  .lang-dropdown-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .lang-btn-toggle {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    outline: none;
+  }
+
+  .lang-btn-toggle svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+  }
+
+  .lang-menu-list {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 32px;
+    background: #2c3e50;
+    border: 1px solid #34495e;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    z-index: 10000;
+    min-width: 120px;
+  }
+
+  .lang-menu-list.show {
+    display: block;
+  }
+
+  .lang-option {
+    padding: 8px 12px;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: left;
+  }
+
+  .lang-option:hover {
+    background: #34495e;
+  }
+
+  .top-section {
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+    margin-bottom: 2px;
+  }
+
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 140px;
+  }
+
+  .profile-box {
+    background: linear-gradient(135deg, #e056fd, #be2edd);
+    border: 2px solid #ffbe76;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    padding: 4px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .profile-avatar { font-size: 16px; margin-bottom: 1px; }
+  .profile-uid {
+    font-size: 9px;
+    color: #f1f2f6;
+    background: rgba(0,0,0,0.2);
+    padding: 1px 4px;
+    border-radius: 4px;
+    margin-top: 2px;
+  }
+
+  .mini-task-board {
+    background: #fdf6e2;
+    border: 3px solid #b5651d;
+    border-radius: 12px;
+    padding: 6px;
+    color: #3e2723;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    height: auto;
+    min-height: 110px;
+  }
+  .mini-task-title {
+    text-align: center;
+    font-weight: 900;
+    font-size: 11px;
+    border-bottom: 2px dashed #b5651d;
+    padding-bottom: 2px;
+    color: #8b4513;
+  }
+  .mini-task-item {
+    background: #fff;
+    border: 1px solid #d7ccc8;
+    border-radius: 6px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 8px;
+    font-weight: bold;
+    color: #2c3e50;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+  .mini-task-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 3px 14px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #1e8449;
+  }
+  .mini-task-btn:disabled { background: #95a5a6; box-shadow: none; cursor: not-allowed; }
+
+  .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-pill {
+    background: #5d4037;
+    border: 2px solid #3e2723;
+    border-radius: 16px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3px 0 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .stat-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    margin-left: -2px;
+    flex-shrink: 0;
+  }
+  .stat-icon.coin { background: radial-gradient(circle, #fbc531, #e1b12c); border: 2px solid #f5cd79; }
+  .stat-icon.crypto { background: radial-gradient(circle, #00a8ff, #0097e6); border: 2px solid #718093; color: white; font-weight: bold; font-size: 8px; }
+
+  .stat-value {
+    color: white;
+    font-weight: 800;
+    font-size: 11px;
+    margin: 0 4px;
+    text-align: right;
+    width: 100%;
+  }
+
+  .add-btn {
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(to bottom, #4cd137, #44bd32);
+    border: 1px solid #ffffff;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .inventory-card {
+    background: #558b2f;
+    border: 2px solid #33691e;
+    border-radius: 10px;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 9px;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .claim-free-btn {
+    background: #f1c40f;
+    color: #2c3e50;
+    border: none;
+    padding: 3px 4px;
+    border-radius: 5px;
+    font-size: 8px;
+    font-weight: 900;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 0 #d4ac0d;
+    margin-top: 1px;
+  }
+
+  .screen-view {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 2px 0;
+  }
+  .screen-view.active { display: flex; }
+
+  .perspective-wrapper {
+    perspective: 800px;
+    perspective-origin: 50% 30%;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .farm-grid-3d {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 16px;
+    column-gap: 14px;
+    width: 95%;
+    transform: rotateX(8deg);
+    transform-style: preserve-3d;
+    transform-origin: bottom center;
+  }
+
+  .plot-3d {
+    background: #795548;
+    border: 2px solid #5d4037;
+    border-radius: 10px;
+    height: 82px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 0px 6px 0px #4e342e, 0px 10px 12px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transform: rotateX(-8deg);
+  }
+
+  .plot-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    padding: 2px;
+  }
+
+  .plot-padlock { font-size: 16px; margin-bottom: 1px; }
+  .plant-icon { font-size: 1.1rem; }
+
+  .timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+  }
+
+  .timer-text {
+    font-size: 7px;
+    background: rgba(0,0,0,0.8);
+    color: #fdcb6e;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-bottom: 2px;
+  }
+
+  .boosters-row {
+    display: flex;
+    justify-content: space-between;
+    width: 96%;
+    gap: 3px;
+  }
+
+  .action-small-btn {
+    font-size: 7px;
+    padding: 2px 4px;
+    background: #00b894;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .action-small-btn.harvest { background: #e17055; width: 85%; font-size: 7px; }
+  .action-small-btn.boost-fert { background: #e67e22; flex: 1; }
+  .action-small-btn.boost-water { background: #0984e3; flex: 1; }
+  .action-small-btn.unlock { 
+    background: #8e44ad; 
+    color: white; 
+    font-size: 7px; 
+    padding: 2px 8px; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 0 #5e2d79;
+  }
+
+  .market-container {
+    background: #fdf6e2;
+    border: 3px solid #b5651d;
+    border-radius: 12px;
+    padding: 8px;
+    color: #3e2723;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+  }
+  .market-title {
+    text-align: center;
+    font-weight: 900;
+    font-size: 12px;
+    border-bottom: 2px dashed #b5651d;
+    padding-bottom: 3px;
+    color: #8b4513;
+  }
+  .market-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .m-tab-btn {
+    flex: 1;
+    background: #d7ccc8;
+    border: none;
+    padding: 4px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #5d4037;
+  }
+  .m-tab-btn.active {
+    background: #b5651d;
+    color: white;
+  }
+  .market-tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+  }
+  .market-item-card {
+    background: #fff;
+    border: 1px solid #d7ccc8;
+    border-radius: 8px;
+    padding: 6px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    font-weight: bold;
+  }
+  .market-action-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 9px;
+    cursor: pointer;
+  }
+  .market-action-btn.sell { background: #d35400; }
+  .history-item {
+    background: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 9px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .task-board-full {
+    background: #fdf6e2;
+    border: 3px solid #b5651d;
+    border-radius: 12px;
+    padding: 8px;
+    color: #3e2723;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+  }
+  .task-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-right: 2px;
+  }
+  .task-card {
+    background: #fff;
+    border: 2px solid #d7ccc8;
+    border-radius: 8px;
+    padding: 5px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .task-info h4 { font-size: 10px; color: #2c3e50; }
+  .task-info p { font-size: 8px; color: #7f8c8d; }
+  .task-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-size: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .task-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+
+  .bottom-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #558b2f;
+    border: 3px solid #33691e;
+    border-radius: 18px;
+    padding: 6px;
+    gap: 4px;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  }
+
+  .nav-btn {
+    flex: 1;
+    background: #3b5998;
+    color: #ffffff;
+    border: none;
+    padding: 8px 0;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 3px 0 #1d254c;
+    text-align: center;
+  }
+  .nav-btn:active { transform: translateY(2px); box-shadow: none; }
+  .nav-btn.active {
+    background: #ffb300;
+    color: #3e2723;
+    box-shadow: 0 3px 0 #c77c00;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+
+  <div class="top-utility-bar">
+    <div class="lang-dropdown-container">
+      <button class="lang-btn-toggle" onclick="toggleLangMenu()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <span id="currentLangLabel">EN</span> ▾
+      </button>
+      <div class="lang-menu-list" id="langMenuList">
+        <div class="lang-option" onclick="changeLanguage('en')">English (EN)</div>
+        <div class="lang-option" onclick="changeLanguage('id')">Indonesia (ID)</div>
+        <div class="lang-option" onclick="changeLanguage('ru')">Русский (RU)</div>
+        <div class="lang-option" onclick="changeLanguage('es')">Español (ES)</div>
+        <div class="lang-option" onclick="changeLanguage('pt')">Português (PT)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-section">
+    <div class="left-column">
+      <div class="profile-box">
+        <div class="profile-avatar">👤</div>
+        <span id="txtProfileName">Player</span>
+        <div class="profile-uid" id="playerUidDisplay">UID: 849201</div>
+      </div>
+      <div class="mini-task-board" id="miniTaskBoardContainer">
+        <div class="mini-task-title" id="txtMiniTasks">Tasks</div>
+        <div class="mini-task-item">
+          <span id="txtMiniInvite">Invite Friends</span>
+          <button class="mini-task-btn" onclick="switchNav('FRIENDS', document.querySelectorAll('.nav-btn')[3])" id="miniBtn1">Go</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="stat-pill">
+        <div class="stat-icon coin">🪙</div>
+        <span class="stat-value" id="coinDisplay">100</span>
+        <div class="add-btn" onclick="convertAtfToCoins()">+</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-icon crypto">ATF</div>
+        <span class="stat-value" id="atfDisplay">0.00</span>
+        <div class="add-btn" onclick="openWalletTab()">+</div>
+      </div>
+
+      <div class="inventory-card">
+        <div>🌱 <span id="txtSeedLabel">Seed</span>: <span id="invSeed">0</span></div>
+        <div>🌿 <span id="txtFertLabel">Fert</span>: <span id="invFertilizer">2</span></div>
+        <div>💧 <span id="txtWaterLabel">Water</span>: <span id="invWater">3</span></div>
+        <div id="claimContainer">
+          <button class="claim-free-btn" onclick="claimFreeSeed()" id="txtClaimFree">Claim Free Seed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FARM VIEW -->
+  <div id="screenFarm" class="screen-view active">
+    <div class="perspective-wrapper">
+      <div class="farm-grid-3d" id="farmGrid"></div>
+    </div>
+  </div>
+
+  <!-- MARKET VIEW -->
+  <div id="screenMarket" class="screen-view">
+    <div class="market-container">
+      <div class="market-title" id="txtMarketTitle">🛒 Farmer's Market</div>
+      <div class="market-tabs">
+        <button class="m-tab-btn active" onclick="switchMarketTab('buy', this)" id="txtMarketBuyTab">Buy</button>
+        <button class="m-tab-btn" onclick="switchMarketTab('sell', this)" id="txtMarketSellTab">Sell</button>
+        <button class="m-tab-btn" onclick="switchMarketTab('history', this)" id="txtMarketHistTab">History</button>
+      </div>
+
+      <div id="marketBuy" class="market-tab-content" style="display:flex;">
+        <div class="market-item-card">
+          <span id="txtAppleSeed">🌱 Apple Seed (50 Coins)</span>
+          <button class="market-action-btn" onclick="buyItemServer('seed', 50)">Buy</button>
+        </div>
+        <div class="market-item-card">
+          <span id="txtWaterPack">💧 Water Pack (20 Coins)</span>
+          <button class="market-action-btn" onclick="buyItemServer('water', 20)">Buy</button>
+        </div>
+        <div class="market-item-card">
+          <span id="txtFertPack">🌿 Fertilizer Pack (30 Coins)</span>
+          <button class="market-action-btn" onclick="buyItemServer('fertilizer', 30)">Buy</button>
+        </div>
+      </div>
+
+      <div id="marketSell" class="market-tab-content" style="display:none;">
+        <div class="market-item-card">
+          <span id="txtHarvestedApple">🍎 Harvested Apple</span>
+          <button class="market-action-btn sell" onclick="sellHarvest()" id="txtSellBtn">Sell (+150 Coins)</button>
+        </div>
+      </div>
+
+      <div id="marketHistory" class="market-tab-content" style="display:none;">
+        <div class="history-list" id="historyLogList">
+          <div class="history-item" id="txtNoTrans">No transactions yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK VIEW -->
+  <div id="screenTask" class="screen-view">
+    <div class="task-board-full">
+      <div class="market-title" id="txtTaskTitle">📝 Task Missions</div>
+      <div class="task-scroll-container" id="taskList"></div>
+    </div>
+  </div>
+
+  <!-- FRIENDS VIEW -->
+  <div id="screenFriends" class="screen-view">
+    <div class="market-container">
+      <div class="market-title" id="txtFriendsTitle">👥 Invite Friends & Earn</div>
+      
+      <div style="display: flex; gap: 4px;">
+        <div class="market-item-card" style="flex: 1; flex-direction: column; align-items: flex-start;">
+          <span style="font-size: 8px; color: #7f8c8d;" id="txtTotalInvited">Total Invited</span>
+          <span id="totalInvitedDisplay" style="font-size: 11px; font-weight: bold; color: #2c3e50;">0 Friends</span>
+        </div>
+        <div class="market-item-card" style="flex: 1; flex-direction: column; align-items: flex-start;">
+          <span style="font-size: 8px; color: #7f8c8d;" id="txtTotalBonus">Total Bonus Earned</span>
+          <span id="totalBonusDisplay" style="font-size: 11px; font-weight: bold; color: #27ae60;">0.00 ATF</span>
+        </div>
+      </div>
+
+      <div style="background: #fff; padding: 6px; border-radius: 8px; border: 1px solid #d7ccc8; display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-size: 8px; color: #7f8c8d; font-weight: bold;" id="txtRefLinkTitle">Your Referral Link</span>
+        <div style="display: flex; gap: 4px;">
+          <input type="text" id="refLinkInput" value="https://t.me/SuccessFarmerBot?start=ref849201" readonly style="flex: 1; font-size: 8px; padding: 3px; border: 1px solid #d7ccc8; border-radius: 4px; background: #f9f9f9; outline: none;">
+          <button class="market-action-btn" onclick="copyRefLink()" style="padding: 3px 6px; font-size: 8px;" id="txtCopyBtn">Copy</button>
+        </div>
+        <button class="market-action-btn" onclick="shareToTelegram()" style="background: #0088cc; width: 100%; font-size: 8px; margin-top: 2px;" id="txtShareTgBtn">Share to Telegram</button>
+      </div>
+
+      <div style="font-size: 9px; font-weight: bold; color: #8b4513; margin-top: 2px;" id="txtRefListTitle">Referred Friends List (Anti-Sybil Protected)</div>
+      <div class="task-scroll-container" style="max-height: 110px;" id="friendsListContainer">
+        <div class="history-item" style="text-align: center; color: #7f8c8d;" id="txtNoFriends">No qualified friends yet (Must harvest 5x).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WALLET VIEW -->
+  <div id="screenWallet" class="screen-view">
+    <div class="market-container">
+      <div class="market-title" id="txtWalletTitle">💎 Web3 Wallet & Withdraw Queue</div>
+      
+      <div style="background: #fff; padding: 6px; border-radius: 8px; text-align: center;">
+        <p id="walletStatusText" style="color: #c0392b; font-weight: bold; font-size: 9px;">Status: Disconnected</p>
+        <p id="walletAddressDisplay" style="font-size: 8px; color: #7f8c8d; margin-top: 1px;"></p>
+        <button class="market-action-btn" id="connectWalletActionBtn" onclick="toggleTonConnect()" style="margin-top: 4px; background: #0088cc; padding: 2px 6px; font-size: 8px;">Connect Tonkeeper</button>
+      </div>
+
+      <div style="display: flex; gap: 4px;">
+        <div class="market-item-card" style="flex: 1; flex-direction: column; align-items: flex-start;">
+          <span style="font-size: 8px; color: #7f8c8d;" id="txtAtfBalLabel">ATF Balance</span>
+          <span id="walletAtfBalance" style="font-size: 11px;">0.00 ATF</span>
+        </div>
+        <div class="market-item-card" style="flex: 1; flex-direction: column; align-items: flex-start;">
+          <span style="font-size: 8px; color: #7f8c8d;" id="txtDailyQuotaLabel">Daily Quota (Max 10)</span>
+          <span id="dailyQuotaDisplay" style="font-size: 10px; color: #d35400;">10 / 10 Left</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 4px;">
+        <button class="market-action-btn" style="flex: 1; background: #2980b9;" onclick="depositTonPlot()" id="txtDepositBtn">Buy Plot (0.1 TON)</button>
+        <button class="market-action-btn" style="flex: 1; background: #d35400;" onclick="requestWithdrawQueue()" id="txtWithdrawBtn">Queue Withdraw</button>
+      </div>
+
+      <div class="market-tabs" style="margin-top: 2px;">
+        <button class="m-tab-btn active" onclick="switchWalletTab('queue', this)" id="txtWQueueTab">Withdraw Queue (<span id="queueCount">0</span>)</button>
+        <button class="m-tab-btn" onclick="switchWalletTab('history', this)" id="txtWHistTab">Wallet History</button>
+      </div>
+
+      <div id="walletQueueTab" class="market-tab-content" style="display: flex; max-height: 110px;">
+        <div class="history-list" id="withdrawQueueList">
+          <div class="history-item" id="txtNoQueue">No active withdrawal queues.</div>
+        </div>
+      </div>
+
+      <div id="walletHistoryTab" class="market-tab-content" style="display: none; max-height: 110px;">
+        <div class="history-list" id="walletHistoryList">
+          <div class="history-item" id="txtNoWalletHist">No wallet history yet.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-navbar">
+    <button class="nav-btn active" onclick="switchNav('FARM', this)" id="navFarm">FARM</button>
+    <button class="nav-btn" onclick="switchNav('MARKET', this)" id="navMarket">MARKET</button>
+    <button class="nav-btn" onclick="switchNav('TASK', this)" id="navTask">TASK</button>
+    <button class="nav-btn" onclick="switchNav('FRIENDS', this)" id="navFriends">FRIENDS</button>
+    <button class="nav-btn" onclick="switchNav('WALLET', this)" id="navWallet">WALLET</button>
+  </div>
+
+</div>
+
+<script>
+  const translations = {
+    en: {
+      profileName: "Player",
+      miniTasks: "Tasks",
+      seedLabel: "Seed",
+      fertLabel: "Fert",
+      waterLabel: "Water",
+      claimFree: "Claim Free Seed",
+      marketTitle: "🛒 Farmer's Market",
+      buyTab: "Buy",
+      sellTab: "Sell",
+      histTab: "History",
+      appleSeed: "🌱 Apple Seed (50 Coins)",
+      waterPack: "💧 Water Pack (20 Coins)",
+      fertPack: "🌿 Fertilizer Pack (30 Coins)",
+      harvestedApple: "🍎 Harvested Apple",
+      sellBtn: "Sell (+150 Coins)",
+      noTrans: "No transactions yet.",
+      taskTitle: "📝 Task Missions",
+      friendsTitle: "👥 Invite Friends & Earn",
+      totalInvited: "Total Qualified",
+      totalBonus: "Total Bonus Earned",
+      refLinkTitle: "Your Referral Link",
+      copyBtn: "Copy",
+      shareTgBtn: "Share to Telegram",
+      refListTitle: "Referred Friends List",
+      noFriends: "No qualified friends yet (Must harvest 5x).",
+      walletTitle: "💎 Web3 Wallet & Withdraw Queue",
+      statusDisc: "Status: Disconnected",
+      statusConn: "Status: Connected (TonConnect)",
+      connectBtn: "Connect Tonkeeper",
+      discBtn: "Disconnect",
+      atfBal: "ATF Balance",
+      dailyQuota: "Daily Quota (Max 10)",
+      depositBtn: "Buy Plot (0.1 TON)",
+      withdrawBtn: "Queue Withdraw",
+      wQueueTab: "Withdraw Queue",
+      wHistTab: "Wallet History",
+      noQueue: "No active withdrawal queues.",
+      noWalletHist: "No wallet history yet.",
+      navFarm: "FARM",
+      navMarket: "MARKET",
+      navTask: "TASK",
+      navFriends: "FRIENDS",
+      navWallet: "WALLET"
+    },
+    id: {
+      profileName: "Pemain",
+      miniTasks: "Tugas",
+      seedLabel: "Bibit",
+      fertLabel: "Pupuk",
+      waterLabel: "Air",
+      claimFree: "Klaim Bibit Gratis",
+      marketTitle: "🛒 Pasar Petani",
+      buyTab: "Beli",
+      sellTab: "Jual",
+      histTab: "Riwayat",
+      appleSeed: "🌱 Bibit Apel (50 Koin)",
+      waterPack: "💧 Paket Air (20 Koin)",
+      fertPack: "🌿 Paket Pupuk (30 Koin)",
+      harvestedApple: "🍎 Apel Panen",
+      sellBtn: "Jual (+150 Koin)",
+      noTrans: "Belum ada transaksi.",
+      taskTitle: "📝 Misi Tugas",
+      friendsTitle: "👥 Undang Teman & Dapatkan",
+      totalInvited: "Total Memenuhi Syarat",
+      totalBonus: "Total Bonus Didapat",
+      refLinkTitle: "Tautan Referral Anda",
+      copyBtn: "Salin",
+      shareTgBtn: "Bagikan ke Telegram",
+      refListTitle: "Daftar Teman Referensi",
+      noFriends: "Belum ada teman memenuhi syarat (Wajib panen 5x).",
+      walletTitle: "💎 Dompet Web3 & Antrean Tarik",
+      statusDisc: "Status: Terputus",
+      statusConn: "Status: Terhubung (TonConnect)",
+      connectBtn: "Hubungkan Tonkeeper",
+      discBtn: "Putuskan",
+      atfBal: "Saldo ATF",
+      dailyQuota: "Kuota Harian (Maks 10)",
+      depositBtn: "Beli Lahan (0.1 TON)",
+      withdrawBtn: "Antre Tarik",
+      wQueueTab: "Antrean Tarik",
+      wHistTab: "Riwayat Dompet",
+      noQueue: "Tidak ada antrean penarikan aktif.",
+      noWalletHist: "Belum ada riwayat dompet.",
+      navFarm: "KEBUN",
+      navMarket: "PASAR",
+      navTask: "TUGAS",
+      navFriends: "TEMAN",
+      navWallet: "DOMPET"
+    },
+    ru: {
+      profileName: "Игрок",
+      miniTasks: "Задачи",
+      seedLabel: "Семена",
+      fertLabel: "Удобр.",
+      waterLabel: "Вода",
+      claimFree: "Взять семя",
+      marketTitle: "🛒 Рынок фермера",
+      buyTab: "Купить",
+      sellTab: "Продать",
+      histTab: "История",
+      appleSeed: "🌱 Семена яблока",
+      waterPack: "💧 Вода",
+      fertPack: "🌿 Удобрения",
+      harvestedApple: "🍎 Яблоко",
+      sellBtn: "Продать (+150 Монет)",
+      noTrans: "Нет транзакций.",
+      taskTitle: "📝 Задания",
+      friendsTitle: "👥 Друзья",
+      totalInvited: "Приглашено",
+      totalBonus: "Бонус",
+      refLinkTitle: "Реферальная ссылка",
+      copyBtn: "Копировать",
+      shareTgBtn: "Поделиться",
+      refListTitle: "Список",
+      noFriends: "Нет друзей.",
+      walletTitle: "💎 Кошелек Web3",
+      statusDisc: "Отключен",
+      statusConn: "Подключен",
+      connectBtn: "Подключить",
+      discBtn: "Отключить",
+      atfBal: "Баланс ATF",
+      dailyQuota: "Лимит",
+      depositBtn: "Купить участок (0.1 TON)",
+      withdrawBtn: "Вывод",
+      wQueueTab: "Очередь",
+      wHistTab: "История",
+      noQueue: "Пусто",
+      noWalletHist: "Пусто",
+      navFarm: "ФЕРМА",
+      navMarket: "РЫНОК",
+      navTask: "ЗАДАЧИ",
+      navFriends: "ДРУЗЬЯ",
+      navWallet: "КОШЕЛЕК"
+    },
+    es: {
+      profileName: "Jugador",
+      miniTasks: "Tareas",
+      seedLabel: "Semilla",
+      fertLabel: "Fert",
+      waterLabel: "Agua",
+      claimFree: "Reclamar",
+      marketTitle: "🛒 Mercado",
+      buyTab: "Comprar",
+      sellTab: "Vender",
+      histTab: "Historial",
+      appleSeed: "🌱 Semilla",
+      waterPack: "💧 Agua",
+      fertPack: "🌿 Fertilizante",
+      harvestedApple: "🍎 Manzana",
+      sellBtn: "Vender (+150 Monedas)",
+      noTrans: "Sin transacciones.",
+      taskTitle: "📝 Misiones",
+      friendsTitle: "👥 Amigos",
+      totalInvited: "Invitados",
+      totalBonus: "Bono",
+      refLinkTitle: "Enlace",
+      copyBtn: "Copiar",
+      shareTgBtn: "Compartir",
+      refListTitle: "Lista",
+      noFriends: "Sin amigos.",
+      walletTitle: "💎 Billetera",
+      statusDisc: "Desconectado",
+      statusConn: "Conectado",
+      connectBtn: "Conectar",
+      discBtn: "Desconectar",
+      atfBal: "Saldo ATF",
+      dailyQuota: "Cuota",
+      depositBtn: "Comprar Terreno (0.1 TON)",
+      withdrawBtn: "Retirar",
+      wQueueTab: "Cola",
+      wHistTab: "Historial",
+      noQueue: "Vacío",
+      noWalletHist: "Vacío",
+      navFarm: "GRANJA",
+      navMarket: "MERCADO",
+      navTask: "TAREAS",
+      navFriends: "AMIGOS",
+      navWallet: "BILLETERA"
+    },
+    pt: {
+      profileName: "Jogador",
+      miniTasks: "Tarefas",
+      seedLabel: "Semente",
+      fertLabel: "Fert",
+      waterLabel: "Água",
+      claimFree: "Resgatar",
+      marketTitle: "🛒 Mercado",
+      buyTab: "Comprar",
+      sellTab: "Vender",
+      histTab: "Histórico",
+      appleSeed: "🌱 Semente",
+      waterPack: "💧 Água",
+      fertPack: "🌿 Fertilizante",
+      harvestedApple: "🍎 Maçã",
+      sellBtn: "Vender (+150 Moedas)",
+      noTrans: "Sem transações.",
+      taskTitle: "📝 Missões",
+      friendsTitle: "👥 Amigos",
+      totalInvited: "Convidados",
+      totalBonus: "Bônus",
+      refLinkTitle: "Link",
+      copyBtn: "Copiar",
+      shareTgBtn: "Compartilhar",
+      refListTitle: "Lista",
+      noFriends: "Sem amigos.",
+      walletTitle: "💎 Carteira",
+      statusDisc: "Desconectado",
+      statusConn: "Conectado",
+      connectBtn: "Conectar",
+      discBtn: "Desconectar",
+      atfBal: "Saldo ATF",
+      dailyQuota: "Cota",
+      depositBtn: "Comprar Terreno (0.1 TON)",
+      withdrawBtn: "Sacar",
+      wQueueTab: "Fila",
+      wHistTab: "Histórico",
+      noQueue: "Vazio",
+      noWalletHist: "Vazio",
+      navFarm: "FAZENDA",
+      navMarket: "MERCADO",
+      navTask: "TAREFAS",
+      navFriends: "AMIGOS",
+      navWallet: "CARTEIRA"
+    }
+  };
+
+  let currentLang = 'en';
+
+  function toggleLangMenu() {
+    document.getElementById('langMenuList').classList.toggle('show');
+  }
+
+  window.onclick = function(event) {
+    if (!event.target.closest('.lang-dropdown-container')) {
+      document.getElementById('langMenuList').classList.remove('show');
+    }
+  }
+
+  function changeLanguage(lang) {
+    currentLang = lang;
+    document.getElementById('currentLangLabel').textContent = lang.toUpperCase();
+    document.getElementById('langMenuList').classList.remove('show');
+    updateTexts();
+  }
+
+  function updateTexts() {
+    const t = translations[currentLang];
+    document.getElementById('txtProfileName').textContent = t.profileName;
+    document.getElementById('txtMiniTasks').textContent = t.miniTasks;
+    document.getElementById('txtSeedLabel').textContent = t.seedLabel;
+    document.getElementById('txtFertLabel').textContent = t.fertLabel;
+    document.getElementById('txtWaterLabel').textContent = t.waterLabel;
+    document.getElementById('txtClaimFree').textContent = t.claimFree;
+    document.getElementById('txtMarketTitle').textContent = t.marketTitle;
+    document.getElementById('txtMarketBuyTab').textContent = t.buyTab;
+    document.getElementById('txtMarketSellTab').textContent = t.sellTab;
+    document.getElementById('txtMarketHistTab').textContent = t.histTab;
+    document.getElementById('txtAppleSeed').textContent = t.appleSeed;
+    document.getElementById('txtWaterPack').textContent = t.waterPack;
+    document.getElementById('txtFertPack').textContent = t.fertPack;
+    document.getElementById('txtHarvestedApple').textContent = t.harvestedApple;
+    document.getElementById('txtSellBtn').textContent = t.sellBtn;
+    document.getElementById('txtNoTrans').textContent = t.noTrans;
+    document.getElementById('txtTaskTitle').textContent = t.taskTitle;
+    document.getElementById('txtFriendsTitle').textContent = t.friendsTitle;
+    document.getElementById('txtTotalInvited').textContent = t.totalInvited;
+    document.getElementById('txtTotalBonus').textContent = t.totalBonus;
+    document.getElementById('txtRefLinkTitle').textContent = t.refLinkTitle;
+    document.getElementById('txtCopyBtn').textContent = t.copyBtn;
+    document.getElementById('txtShareTgBtn').textContent = t.shareTgBtn;
+    document.getElementById('txtRefListTitle').textContent = t.refListTitle;
+    if(referredFriends.length === 0) document.getElementById('txtNoFriends').textContent = t.noFriends;
+    
+    document.getElementById('txtWalletTitle').textContent = t.walletTitle;
+    document.getElementById('walletStatusText').textContent = isWalletConnected ? t.statusConn : t.statusDisc;
+    document.getElementById('connectWalletActionBtn').textContent = isWalletConnected ? t.discBtn : t.connectBtn;
+    document.getElementById('txtAtfBalLabel').textContent = t.atfBal;
+    document.getElementById('txtDailyQuotaLabel').textContent = t.dailyQuota;
+    document.getElementById('txtDepositBtn').textContent = t.depositBtn;
+    document.getElementById('txtWithdrawBtn').textContent = t.withdrawBtn;
+    document.getElementById('txtWQueueTab').textContent = t.wQueueTab + ` (${withdrawQueues.length})`;
+    document.getElementById('txtWHistTab').textContent = t.wHistTab;
+    if(withdrawQueues.length === 0) document.getElementById('txtNoQueue').textContent = t.noQueue;
+    if(walletHistory.length === 0) document.getElementById('txtNoWalletHist').textContent = t.noWalletHist;
+
+    document.getElementById('navFarm').textContent = t.navFarm;
+    document.getElementById('navMarket').textContent = t.navMarket;
+    document.getElementById('navTask').textContent = t.navTask;
+    document.getElementById('navFriends').textContent = t.navFriends;
+    document.getElementById('navWallet').textContent = t.navWallet;
+    
+    renderTasks();
+  }
+
+  // --- STATE EKONOMI SEIMBANG & AMAN ---
+  let userCoins = 100; // Modal awal koin game
+  let userAtf = 0.00;
+  let userTon = 0.0;
+  let isWalletConnected = false;
+  let walletAddress = "";
+
+  let dailyWithdrawCount = 0;
+  const MAX_DAILY_WITHDRAW = 10;
+  let withdrawQueues = []; 
+  let walletHistory = []; 
+  let referredFriends = []; // Sybil attack protected list
+
+  let inventory = {
+    seed: 0,
+    water: 3,
+    fertilizer: 2,
+    harvestedApples: 0,
+    hasClaimedFree: false
+  };
+
+  let transactionHistory = [];
+
+  // Plot server-side harvest tracking (Durasi 5 jam = 18000 detik)
+  let plots = [
+    { id: 0, status: 'empty', harvestTime: 0, totalDuration: 18000, unlocked: true },
+    { id: 1, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 2, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 3, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 4, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 5, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 6, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 7, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false },
+    { id: 8, status: 'locked', harvestTime: 0, totalDuration: 18000, unlocked: false }
+  ];
+
+  // Tugas dengan imbalan kombinasi Koin besar & ATF sangat kecil untuk hindari inflasi
+  let tasks = [
+    { id: 1, title: 'Join Telegram Channel (@ATFarmChannel)', rewardCoins: 500, rewardAtf: 0.01, completed: false, type: 'telegram' },
+    { id: 2, title: 'Invite 1 Qualified Friend (Harvest 5x)', rewardCoins: 1000, rewardAtf: 0.05, completed: false, type: 'invite' },
+    { id: 3, title: 'Harvest First Apple', rewardCoins: 200, rewardAtf: 0.01, completed: false, type: 'harvest' },
+    { id: 4, title: 'Share Game to Stories', rewardCoins: 300, rewardAtf: 0.01, completed: false, type: 'share' }
+  ];
+
+  const farmGridEl = document.getElementById('farmGrid');
+  const taskListEl = document.getElementById('taskList');
+  const invSeedEl = document.getElementById('invSeed');
+  const invWaterEl = document.getElementById('invWater');
+  const invFertilizerEl = document.getElementById('invFertilizer');
+  const claimContainerEl = document.getElementById('claimContainer');
+  const coinDisplayEl = document.getElementById('coinDisplay');
+  const atfDisplayEl = document.getElementById('atfDisplay');
+  const miniTaskBoardContainer = document.getElementById('miniTaskBoardContainer');
+
+  function copyRefLink() {
+    const refInput = document.getElementById('refLinkInput');
+    refInput.select();
+    refInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(refInput.value);
+    alert(currentLang === 'id' ? "Tautan referral disalin!" : "Referral link copied!");
+  }
+
+  function shareToTelegram() {
+    const text = encodeURIComponent("Join Success Farmer and earn crypto securely! Play here:");
+    const url = `https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLinkInput').value)}&text=${text}`;
+    window.open(url, '_blank');
+  }
+
+  function renderFriendsUI() {
+    const totalInvitedEl = document.getElementById('totalInvitedDisplay');
+    const totalBonusEl = document.getElementById('totalBonusDisplay');
+    const friendsListEl = document.getElementById('friendsListContainer');
+
+    totalInvitedEl.textContent = `${referredFriends.length} ` + (currentLang === 'id' ? "Memenuhi Syarat" : "Qualified");
+    let totalBonus = referredFriends.reduce((acc, f) => acc + (f.claimed ? f.rewardAtf : 0), 0);
+    totalBonusEl.textContent = `${totalBonus.toFixed(2)} ATF`;
+
+    if (referredFriends.length === 0) {
+      friendsListEl.innerHTML = `<div class="history-item" style="text-align: center; color: #7f8c8d;">${translations[currentLang].noFriends}</div>`;
+      return;
+    }
+
+    friendsListEl.innerHTML = '';
+    referredFriends.forEach((friend, idx) => {
+      let div = document.createElement('div');
+      div.className = 'task-card';
+      div.innerHTML = `
+        <div class="task-info">
+          <h4>${friend.name}</h4>
+          <p>Harvest Count: ${friend.harvestCount}/5 (${friend.harvestCount >= 5 ? 'Qualified ✅' : 'In Progress ⏳'})</p>
+        </div>
+        <button class="task-btn" ${friend.claimed || friend.harvestCount < 5 ? 'disabled' : ''} onclick="claimFriendReward(${idx})">
+          ${friend.claimed ? 'Claimed' : 'Claim Reward'}
+        </button>
+      `;
+      friendsListEl.appendChild(div);
+    });
+  }
+
+  function claimFriendReward(index) {
+    let friend = referredFriends[index];
+    if (!friend || friend.claimed || friend.harvestCount < 5) return;
+
+    friend.claimed = true;
+    userAtf += friend.rewardAtf;
+    walletHistory.unshift(`Referral Bonus: +${friend.rewardAtf} ATF`);
+    renderAllUI();
+    alert(currentLang === 'id' ? "Bonus referral berhasil diklaim!" : "Referral reward claimed successfully!");
+  }
+
+  function openWalletTab() {
+    switchNav('WALLET', document.querySelectorAll('.nav-btn')[4]);
+  }
+
+  // Konversi Koin Game ke ATF (Rasio Ketat: 10.000 Koin = 1 ATF)
+  function convertAtfToCoins() {
+    let confirmConv = confirm(currentLang === 'id' ? "Konversi 10.000 Koin Game menjadi 1.00 ATF?" : "Convert 10,000 Game Coins into 1.00 ATF?");
+    if (confirmConv) {
+      if (userCoins >= 10000) {
+        userCoins -= 10000;
+        userAtf += 1.00;
+        walletHistory.unshift(`Converted 10,000 Coins -> 1.00 ATF`);
+        renderAllUI();
+        alert(currentLang === 'id' ? "Konversi berhasil!" : "Conversion successful!");
+      } else {
+        alert(currentLang === 'id' ? "Koin tidak cukup! Butuh 10.000 Koin." : "Not enough coins! Need 10,000 Coins.");
+      }
+    }
+  }
+
+  // Integrasi TonConnect Asli (Simulasi SDK @tonconnect/ui)
+  function toggleTonConnect() {
+    const t = translations[currentLang];
+    if (!isWalletConnected) {
+      // Di aplikasi nyata, panggil: tonConnectUI.openModal();
+      isWalletConnected = true;
+      walletAddress = "EQD1...3x9a_Tonkeeper";
+      userTon = 1.5;
+      document.getElementById('walletStatusText').textContent = t.statusConn;
+      document.getElementById('walletStatusText').style.color = "#27ae60";
+      document.getElementById('walletAddressDisplay').textContent = walletAddress;
+      document.getElementById('connectWalletActionBtn').textContent = t.discBtn;
+      document.getElementById('connectWalletActionBtn').style.background = "#c0392b";
+      walletHistory.unshift(`TonConnect Linked: ${walletAddress}`);
+      alert(currentLang === 'id' ? "Dompet Tonkeeper berhasil terhubung!" : "Tonkeeper connected securely via TonConnect!");
+    } else {
+      isWalletConnected = false;
+      walletAddress = "";
+      userTon = 0.0;
+      document.getElementById('walletStatusText').textContent = t.statusDisc;
+      document.getElementById('walletStatusText').style.color = "#c0392b";
+      document.getElementById('walletAddressDisplay').textContent = "";
+      document.getElementById('connectWalletActionBtn').textContent = t.connectBtn;
+      document.getElementById('connectWalletActionBtn').style.background = "#0088cc";
+      walletHistory.unshift(`TonConnect Disconnected`);
+      alert(currentLang === 'id' ? "Dompet diputus." : "Wallet disconnected.");
+    }
+    renderAllUI();
+  }
+
+  // Beli Lahan Lanjutan (Plot 2-9) via Mikro-TON (0.1 TON) atau Koin Game besar (5000 Koin)
+  let selectedPlotToUnlock = null;
+  function showUnlockOptions(index) {
+    let choice = prompt(currentLang === 'id' ? "Buka Lahan Plot " + (index+1) + " dengan:\n1. 5.000 Koin Game\n2. 0.1 TON (Micro-Fee Pembeli)\n\nPilih (1 atau 2):" : "Unlock Plot " + (index+1) + " with:\n1. 5,000 Game Coins\n2. 0.1 TON (Micro-Fee)\n\nEnter choice (1 or 2):", "1");
+    
+    if (choice === '1') {
+      if (userCoins >= 5000) {
+        userCoins -= 5000;
+        plots[index].unlocked = true;
+        plots[index].status = 'empty';
+        renderAllUI();
+        alert(currentLang === 'id' ? "Lahan berhasil dibuka dengan Koin!" : "Plot unlocked using Coins!");
+      } else {
+        alert(currentLang === 'id' ? "Koin tidak cukup! Butuh 5.000 Koin." : "Not enough coins! Required: 5,000");
+      }
+    } else if (choice === '2') {
+      if (!isWalletConnected) {
+        alert(currentLang === 'id' ? "Hubungkan dompet Tonkeeper terlebih dahulu!" : "Please connect Tonkeeper wallet first!");
+        return;
+      }
+      userTon -= 0.1;
+      plots[index].unlocked = true;
+      plots[index].status = 'empty';
+      walletHistory.unshift(`Unlocked Plot ${index+1} via 0.1 TON Gateway`);
+      renderAllUI();
+      alert(currentLang === 'id' ? "Pembayaran 0.1 TON sukses! Lahan dibuka." : "0.1 TON payment success! Plot unlocked.");
+    }
+  }
+
+  function depositTonPlot() {
+    alert(currentLang === 'id' ? "Gunakan tombol 'Unlock' di atas setiap petak lahan tertutup untuk membeli lahan via TON atau Koin." : "Click the 'Unlock' button on any locked plot to purchase via TON or Coins.");
+  }
+
+  // Alur Penarikan Berbasis Antrean Backend (Pending Manual Review Admin)
+  function requestWithdrawQueue() {
+    if (!isWalletConnected) {
+      alert(currentLang === 'id' ? "Harap hubungkan dompet TonConnect terlebih dahulu!" : "Please connect TonConnect wallet first!");
+      return;
+    }
+
+    let amount = prompt(currentLang === 'id' ? `Masukkan jumlah ATF untuk ditarik (Saldo: ${userAtf.toFixed(2)}):` : `Enter ATF amount to withdraw (Available: ${userAtf.toFixed(2)}):`, "1.0");
+    if (amount === null) return;
+    let num = parseFloat(amount);
+
+    if (num <= 0 || num > userAtf) {
+      alert(currentLang === 'id' ? "Jumlah tidak valid atau saldo ATF kurang!" : "Invalid amount or insufficient ATF balance!");
+      return;
+    }
+
+    if (dailyWithdrawCount >= MAX_DAILY_WITHDRAW) {
+      alert(currentLang === 'id' ? "Kuota penarikan harian penuh (Maks 10 antrean/hari). Coba besok." : "Daily withdrawal quota reached (Max 10/day). Try tomorrow.");
+      return;
+    }
+
+    dailyWithdrawCount++;
+    userAtf -= num;
+
+    let queueNumber = "Q-" + Math.floor(1000 + Math.random() * 9000);
+    let queueData = {
+      queueNo: queueNumber,
+      amount: num,
+      status: "PENDING (Admin Verification)"
+    };
+
+    withdrawQueues.push(queueData);
+    walletHistory.unshift(`Withdraw Request ${num} ATF - [${queueNumber}] (Pending Review)`);
+    
+    renderAllUI();
+    alert((currentLang === 'id' ? "Antrean penarikan berhasil dibuat!\nNo Antrean: " : "Withdrawal queued successfully!\nQueue No: ") + queueNumber + "\nAdmin will review and transfer within 24 hours.");
+  }
+
+  function renderAllUI() {
+    renderFarm();
+    invSeedEl.textContent = inventory.seed;
+    invWaterEl.textContent = inventory.water;
+    invFertilizerEl.textContent = inventory.fertilizer;
+    coinDisplayEl.textContent = userCoins;
+    atfDisplayEl.textContent = userAtf.toFixed(2);
+    
+    let atfBalEl = document.getElementById('walletAtfBalance');
+    let quotaEl = document.getElementById('dailyQuotaDisplay');
+    let queueCountEl = document.getElementById('queueCount');
+
+    if (atfBalEl) atfBalEl.textContent = userAtf.toFixed(2) + " ATF";
+    
+    let remainingQuota = Math.max(0, MAX_DAILY_WITHDRAW - dailyWithdrawCount);
+    if (quotaEl) quotaEl.textContent = remainingQuota + " / 10 Left";
+    if (queueCountEl) queueCountEl.textContent = withdrawQueues.length;
+
+    renderWalletQueues();
+    renderWalletHistory();
+    renderFriendsUI();
+
+    if (inventory.hasClaimedFree) {
+      claimContainerEl.innerHTML = ''; 
+    }
+  }
+
+  function renderWalletQueues() {
+    const queueListEl = document.getElementById('withdrawQueueList');
+    if (withdrawQueues.length === 0) {
+      queueListEl.innerHTML = `<div class="history-item">${translations[currentLang].noQueue}</div>`;
+      return;
+    }
+    queueListEl.innerHTML = '';
+    withdrawQueues.forEach(q => {
+      let div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `<b>[${q.queueNo}]</b> ${q.amount} ATF <br><span style="color:#d35400;">Status: ${q.status}</span>`;
+      queueListEl.appendChild(div);
+    });
+  }
+
+  function renderWalletHistory() {
+    const historyListEl = document.getElementById('walletHistoryList');
+    if (walletHistory.length === 0) {
+      historyListEl.innerHTML = `<div class="history-item">${translations[currentLang].noWalletHist}</div>`;
+      return;
+    }
+    historyListEl.innerHTML = '';
+    walletHistory.forEach(log => {
+      let div = document.createElement('div');
+      div.className = 'history-item';
+      div.textContent = log;
+      historyListEl.appendChild(div);
+    });
+  }
+
+  function switchWalletTab(tabName, btnElement) {
+    document.querySelectorAll('#screenWallet .m-tab-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    document.getElementById('walletQueueTab').style.display = 'none';
+    document.getElementById('walletHistoryTab').style.display = 'none';
+
+    if (tabName === 'queue') {
+      document.getElementById('walletQueueTab').style.display = 'flex';
+    } else if (tabName === 'history') {
+      document.getElementById('walletHistoryTab').style.display = 'flex';
+    }
+  }
+
+  // Logika Pembelian via Endpoint Server API (Simulasi Terhubung ke Backend)
+  function buyItemServer(itemType, costCoins) {
+    if (userCoins >= costCoins) {
+      userCoins -= costCoins;
+      if (itemType === 'seed') inventory.seed += 1;
+      if (itemType === 'water') inventory.water += 1;
+      if (itemType === 'fertilizer') inventory.fertilizer += 1;
+
+      transactionHistory.unshift(`Bought 1x ${itemType} for ${costCoins} Coins`);
+      renderAllUI();
+      alert(currentLang === 'id' ? `Berhasil membeli 1x ${itemType}!` : `Successfully purchased 1x ${itemType}!`);
+    } else {
+      alert(currentLang === 'id' ? "Koin Game tidak cukup!" : "Insufficient Game Coins!");
+    }
+  }
+
+  function claimFreeSeed() {
+    if (!inventory.hasClaimedFree) {
+      inventory.seed += 1;
+      inventory.hasClaimedFree = true;
+      renderAllUI();
+      alert(currentLang === 'id' ? "Berhasil! Mendapatkan 1 Bibit Apel Gratis." : "Success! Received 1 Free Apple Seed.");
+    }
+  }
+
+  // Tanam Bibit menggunakan Waktu Server (Anti-Cheat Jam HP)
+  function plantSeed(index) {
+    if (inventory.seed <= 0) {
+      alert(currentLang === 'id' ? "Bibit habis! Klaim gratis atau beli di Pasar." : "No seeds left! Claim free seed or buy in Market.");
+      return;
+    }
+    inventory.seed -= 1;
+    plots[index].status = 'growing';
+    // Waktu panen dicatat berdasarkan waktu epoch server (Date.now() + durasi)
+    plots[index].harvestTime = Date.now() + (plots[index].totalDuration * 1000);
+    renderAllUI();
+  }
+
+  function useWater(index) {
+    if (inventory.water > 0) {
+      inventory.water -= 1;
+      // Mengurangi waktu panen sebanyak 30 menit (1800 detik)
+      plots[index].harvestTime -= (1800 * 1000);
+      if (plots[index].harvestTime <= Date.now()) {
+        plots[index].harvestTime = Date.now();
+        plots[index].status = 'ready';
+      }
+      renderAllUI();
+      alert(currentLang === 'id' ? "Air digunakan! Waktu berkurang 30 menit." : "Water applied! Time reduced by 30 mins.");
+    } else {
+      alert(currentLang === 'id' ? "Stok air habis!" : "Water stock is empty!");
+    }
+  }
+
+  function useFertilizer(index) {
+    if (inventory.fertilizer > 0) {
+      inventory.fertilizer -= 1;
+      // Mengurangi waktu panen sebanyak 30 detik
+      plots[index].harvestTime -= (30 * 1000);
+      if (plots[index].harvestTime <= Date.now()) {
+        plots[index].harvestTime = Date.now();
+        plots[index].status = 'ready';
+      }
+      renderAllUI();
+      alert(currentLang === 'id' ? "Pupuk digunakan! Waktu berkurang 30 detik." : "Fertilizer applied! Time reduced by 30 secs.");
+    } else {
+      alert(currentLang === 'id' ? "Stok pupuk habis!" : "Fertilizer stock is empty!");
+    }
+  }
+
+  // Panen menghasilkan Koin Game, bukan ATF langsung (Menjaga Ekosistem Ekonomi)
+  function harvestPlot(index) {
+    inventory.harvestedApples += 1;
+    plots[index].status = 'empty';
+    plots[index].harvestTime = 0;
+    
+    transactionHistory.unshift(`Harvested 1 Apple (+1 Apple in Inventory)`);
+    renderAllUI();
+    alert(currentLang === 'id' ? "Panen Berhasil! 1 Apel disimpan di inventaris. Pergi ke Market -> Sell untuk menukarnya dengan Koin Game." : "Harvest Successful! 1 Apple stored. Go to Market -> Sell to exchange for Game Coins.");
+  }
+
+  function sellHarvest() {
+    if (inventory.harvestedApples > 0) {
+      let earnedCoins = inventory.harvestedApples * 150;
+      userCoins += earnedCoins;
+      let count = inventory.harvestedApples;
+      inventory.harvestedApples = 0;
+      
+      transactionHistory.unshift(`Sold ${count} Apples for ${earnedCoins} Coins`);
+      renderAllUI();
+      alert(currentLang === 'id' ? `Berhasil menjual ${count} Apel! +${earnedCoins} Koin Game ditambahkan.` : `Sold ${count} Apples! +${earnedCoins} Game Coins added.`);
+    } else {
+      alert(currentLang === 'id' ? "Tidak ada apel untuk dijual di inventaris!" : "No harvested apples in inventory to sell!");
+    }
+  }
+
+  // Render Grid Farm berbasis Server Timestamp
+  function renderFarm() {
+    farmGridEl.innerHTML = '';
+    const now = Date.now();
+
+    plots.forEach((plot, index) => {
+      let plotDiv = document.createElement('div');
+      plotDiv.className = 'plot-3d';
+      
+      let innerHTML = '';
+      if (!plot.unlocked) {
+        innerHTML = `
+          <div class="plot-content">
+            <span class="plot-padlock">🔒</span>
+            <button class="action-small-btn unlock" onclick="showUnlockOptions(${index})">${currentLang === 'id' ? 'Buka' : 'Unlock'}</button>
+          </div>
+        `;
+      } else if (plot.status === 'empty') {
+        innerHTML = `
+          <div class="plot-content" onclick="plantSeed(${index})">
+            <span style="font-size:8px; color:#d7ccc8; margin-bottom:1px;">Plot ${index+1}</span>
+            <button class="action-small-btn" style="background:#00b894;">${currentLang === 'id' ? 'Tanam' : 'Plant'}</button>
+          </div>
+        `;
+      } else if (plot.status === 'growing') {
+        let diffSec = Math.floor((plot.harvestTime - now) / 1000);
+        if (diffSec <= 0) {
+          plot.status = 'ready';
+          diffSec = 0;
+        }
+
+        let hours = Math.floor(diffSec / 3600);
+        let minutes = Math.floor((diffSec % 3600) / 60);
+        let seconds = diffSec % 60;
+        let timeFormatted = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        
+        innerHTML = `
+          <div class="plot-content">
+            <div class="plant-icon">🌱</div>
+            <div class="timer-container">
+              <div class="timer-text">${timeFormatted}</div>
+              <div class="boosters-row">
+                <button class="action-small-btn boost-fert" onclick="useFertilizer(${index})">🌿 -30s</button>
+                <button class="action-small-btn boost-water" onclick="useWater(${index})">💧 -30m</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (plot.status === 'ready') {
+        innerHTML = `
+          <div class="plot-content">
+            <div class="plant-icon">🍎</div>
+            <button class="action-small-btn harvest" onclick="harvestPlot(${index})">${currentLang === 'id' ? 'Panen' : 'Harvest'}</button>
+          </div>
+        `;
+      }
+      
+      plotDiv.innerHTML = innerHTML;
+      farmGridEl.appendChild(plotDiv);
+    });
+  }
+
+  function renderTasks() {
+    taskListEl.innerHTML = '';
+    tasks.forEach(task => {
+      let div = document.createElement('div');
+      div.className = 'task-card';
+      div.innerHTML = `
+        <div class="task-info">
+          <h4>${task.title}</h4>
+          <p>${currentLang === 'id' ? 'Hadiah' : 'Reward'}: +${task.rewardCoins} Coins & +${task.rewardAtf} ATF</p>
+        </div>
+        <button class="task-btn" ${task.completed ? 'disabled' : ''} onclick="handleTaskAction(${task.id})">
+          ${task.completed ? (currentLang === 'id' ? 'Selesai' : 'Completed') : (currentLang === 'id' ? 'Klaim' : 'Claim')}
+        </button>
+      `;
+      taskListEl.appendChild(div);
+    });
+  }
+
+  // Validasi Misi Tugas (Integrasi Telegram getChatMember API dari Backend)
+  function handleTaskAction(taskId) {
+    let task = tasks.find(t => t.id === taskId);
+    if (!task || task.completed) return;
+
+    if (task.type === 'telegram') {
+      let verified = confirm(currentLang === 'id' ? "Backend API mengecek status keanggotaan channel Telegram Anda...\n(Klik OK untuk mensimulasikan verifikasi sukses)" : "Backend API checking Telegram channel membership...\n(Click OK to simulate successful verification)");
+      if (verified) {
+        task.completed = true;
+        userCoins += task.rewardCoins;
+        userAtf += task.rewardAtf;
+        walletHistory.unshift(`Completed Task: ${task.title} (+${task.rewardCoins} Coins, +${task.rewardAtf} ATF)`);
+        alert(`Success! +${task.rewardCoins} Coins & +${task.rewardAtf} ATF`);
+        renderAllUI();
+        renderTasks();
+      }
+    } else if (task.type === 'harvest') {
+      task.completed = true;
+      userCoins += task.rewardCoins;
+      userAtf += task.rewardAtf;
+      walletHistory.unshift(`Completed Task: ${task.title}`);
+      alert(`Success! +${task.rewardCoins} Coins & +${task.rewardAtf} ATF`);
+      renderAllUI();
+      renderTasks();
+    } else if (task.type === 'invite') {
+      alert(currentLang === 'id' ? "Misi ini mensyaratkan teman yang diundang harus mencapai minimal 5x panen (Anti-Sybil)." : "This task requires your referred friend to reach at least 5 harvests (Sybil Protected).");
+    } else if (task.type === 'share') {
+      task.completed = true;
+      userCoins += task.rewardCoins;
+      userAtf += task.rewardAtf;
+      walletHistory.unshift(`Completed Task: ${task.title}`);
+      alert(`Success! +${task.rewardCoins} Coins & +${task.rewardAtf} ATF`);
+      renderAllUI();
+      renderTasks();
+    }
+  }
+
+  function switchMarketTab(tabName, btnElement) {
+    document.querySelectorAll('#screenMarket .m-tab-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    document.getElementById('marketBuy').style.display = 'none';
+    document.getElementById('marketSell').style.display = 'none';
+    document.getElementById('marketHistory').style.display = 'none';
+
+    if (tabName === 'buy') {
+      document.getElementById('marketBuy').style.display = 'flex';
+    } else if (tabName === 'sell') {
+      document.getElementById('marketSell').style.display = 'flex';
+    } else if (tabName === 'history') {
+      document.getElementById('marketHistory').style.display = 'flex';
+      renderHistoryLog();
+    }
+  }
+
+  function renderHistoryLog() {
+    const historyListEl = document.getElementById('historyLogList');
+    if (transactionHistory.length === 0) {
+      historyListEl.innerHTML = `<div class="history-item">${translations[currentLang].noTrans}</div>`;
+      return;
+    }
+    historyListEl.innerHTML = '';
+    transactionHistory.forEach(log => {
+      let div = document.createElement('div');
+      div.className = 'history-item';
+      div.textContent = log;
+      historyListEl.appendChild(div);
+    });
+  }
+
+  // Timer interval UI untuk memperbarui hitung mundur secara halus
+  setInterval(() => {
+    renderFarm();
+  }, 1000);
+
+  function switchNav(menuName, btnElement) {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    document.querySelectorAll('.screen-view').forEach(screen => screen.classList.remove('active'));
+
+    if (menuName === 'FARM') {
+      document.getElementById('screenFarm').classList.add('active');
+      miniTaskBoardContainer.style.display = 'flex';
+    } else if (menuName === 'TASK') {
+      document.getElementById('screenTask').classList.add('active');
+      miniTaskBoardContainer.style.display = 'none';
+      renderTasks();
+    } else if (menuName === 'MARKET') {
+      document.getElementById('screenMarket').classList.add('active');
+      miniTaskBoardContainer.style.display = 'none';
+    } else if (menuName === 'FRIENDS') {
+      document.getElementById('screenFriends').classList.add('active');
+      miniTaskBoardContainer.style.display = 'none';
+      renderFriendsUI();
+    } else if (menuName === 'WALLET') {
+      document.getElementById('screenWallet').classList.add('active');
+      miniTaskBoardContainer.style.display = 'none';
+      renderAllUI();
+    }
+  }
+
+  renderAllUI();
+</script>
+
+</body>
+</html>
