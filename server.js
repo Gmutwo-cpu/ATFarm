@@ -7,22 +7,34 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Halaman sambutan utama agar tidak muncul "Cannot GET /"
+// Halaman sambutan utama agar tidak muncul "Cannot GET /"[cite: 10]
 app.get('/', (req, res) => {
   res.send('ATFarmBot Backend is Running Smoothly! 🚀');
 });
 
-// Mengambil Kredensial dan Token dari Environment Variables (Aman dari Bocor)
+// Mengambil Kredensial dan Token dari Environment Variables (Aman dari Bocor)[cite: 10]
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://qsbdxllnsejngubrxexb.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'MASUKKAN_KEY_JIKA_DI_LOKAL';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'MASUKKAN_TOKEN_BARU_ANDA';
 
-// Endpoint 1: Mengambil atau Membuat Data Pemain di Supabase (Anti-Reset)
+// --- DAFTAR WHITELIST ID TELEGRAM PENGUJI (UJI COBA TERTUTUP) ---
+// Masukkan ID Telegram Anda ke dalam array di bawah ini (dalam bentuk teks/string)
+const ALLOWED_TESTER_IDS = ["8560233709", "MASUKKAN_ID_TELEGRAM_ANDA_LAINNYA"];
+
+// Endpoint 1: Mengambil atau Membuat Data Pemain di Supabase dengan Validasi Whitelist (Anti-Reset)[cite: 10]
 app.post('/api/get-player', async (req, res) => {
   const { telegramId } = req.body;
   if (!telegramId) return res.status(400).json({ error: 'Telegram ID required' });
+
+  // Pengecekan Keamanan Whitelist: Tolak jika ID tidak terdaftar
+  if (!ALLOWED_TESTER_IDS.includes(String(telegramId))) {
+    return res.status(403).json({ 
+      error: "Access Denied", 
+      message: "Bot sedang dalam tahap uji coba tertutup (Private Testing). Akses ditolak untuk umum." 
+    });
+  }
 
   let { data, error } = await supabase
     .from('players')
@@ -62,10 +74,15 @@ app.post('/api/get-player', async (req, res) => {
   res.json(data);
 });
 
-// Endpoint 2: Menyimpan Pembaruan Game ke Database
+// Endpoint 2: Menyimpan Pembaruan Game ke Database[cite: 10]
 app.post('/api/save-player', async (req, res) => {
   const { telegramId, coins, atf, inventory, plots } = req.body;
   
+  // Keamanan tambahan: Pastikan yang menyimpan data juga dari whitelist
+  if (!ALLOWED_TESTER_IDS.includes(String(telegramId))) {
+    return res.status(403).json({ success: false, error: "Unauthorized access" });
+  }
+
   const { data, error } = await supabase
     .from('players')
     .update({ coins, atf, inventory, plots })
@@ -76,7 +93,7 @@ app.post('/api/save-player', async (req, res) => {
   res.json({ success: true, data });
 });
 
-// Endpoint 3: Validasi Tugas Telegram (getChatMember)[cite: 9]
+// Endpoint 3: Validasi Tugas Telegram (getChatMember)[cite: 9, 10]
 app.post('/api/verify-telegram', async (req, res) => {
   const { userId, channelUsername } = req.body;
   try {
