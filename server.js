@@ -7,17 +7,17 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Tambahkan baris ini agar saat URL utama dibuka, tidak muncul "Cannot GET /"
+// Halaman sambutan utama agar tidak muncul "Cannot GET /"
 app.get('/', (req, res) => {
   res.send('ATFarmBot Backend is Running Smoothly! 🚀');
 });
 
-// Masukkan Kredensial Supabase Anda di sini (ambil dari Project Settings -> API Supabase)
-const SUPABASE_URL = 'https://qsbdxllnsejngubrxexb.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzYmR4bGxuc2Vqbmd1YnJ4ZXhiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NzE0MjA2NCwiZXhwIjoyMTAyNzE4MDY0fQ.8qnCMiRnJ7YWnitWrrOQUg0lW8Gekih70tv1_yXsLjw';
+// Mengambil Kredensial dan Token dari Environment Variables (Aman dari Bocor)
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://qsbdxllnsejngubrxexb.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'MASUKKAN_KEY_JIKA_DI_LOKAL';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const TELEGRAM_BOT_TOKEN = '8960943895:AAE_mbGf1TsYZbpjVpRH0br8Zt-Yt2YNN6Q';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'MASUKKAN_TOKEN_BARU_ANDA';
 
 // Endpoint 1: Mengambil atau Membuat Data Pemain di Supabase (Anti-Reset)
 app.post('/api/get-player', async (req, res) => {
@@ -31,7 +31,6 @@ app.post('/api/get-player', async (req, res) => {
     .single();
 
   if (error || !data) {
-    // Jika pemain baru pertama kali masuk, buatkan data awal di database
     const initialData = {
       id: telegramId,
       coins: 0,
@@ -63,7 +62,7 @@ app.post('/api/get-player', async (req, res) => {
   res.json(data);
 });
 
-// Endpoint 2: Menyimpan Pembaruan Game (Koin, Inventaris, Lahan) ke Database
+// Endpoint 2: Menyimpan Pembaruan Game ke Database
 app.post('/api/save-player', async (req, res) => {
   const { telegramId, coins, atf, inventory, plots } = req.body;
   
@@ -77,7 +76,7 @@ app.post('/api/save-player', async (req, res) => {
   res.json({ success: true, data });
 });
 
-// Endpoint 3: Validasi Tugas Telegram (getChatMember)
+// Endpoint 3: Validasi Tugas Telegram (getChatMember)[cite: 9]
 app.post('/api/verify-telegram', async (req, res) => {
   const { userId, channelUsername } = req.body;
   try {
@@ -96,5 +95,4 @@ app.post('/api/verify-telegram', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-// Di bagian paling bawah server.js, ganti app.listen(...) menjadi:
 module.exports = app;
