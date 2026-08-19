@@ -744,6 +744,50 @@
 </div>
 
 <script>
+  // --- KONFIGURASI BACKEND VERCEL & DATABASE ---
+  const BACKEND_URL = "https://at-farm.vercel.app"; // Ganti dengan URL Vercel backend Anda yang asli
+
+  // Mengambil Telegram ID asli pemain secara otomatis (jika dibuka via Telegram Mini App)
+  const telegramId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id 
+    ? String(window.Telegram.WebApp.initDataUnsafe.user.id) 
+    : "player_demo_999";
+
+  // Fungsi untuk mengambil data pemain dari server Supabase saat game dimuat
+  async function loadPlayerFromServer() {
+    try {
+      let response = await fetch(`${BACKEND_URL}/api/get-player`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegramId })
+      });
+      let data = await response.json();
+      
+      userCoins = data.coins;
+      userAtf = parseFloat(data.atf);
+      inventory = data.inventory;
+      plots = data.plots;
+      
+      document.getElementById('playerUidDisplay').textContent = "UID: " + telegramId;
+      renderAllUI();
+    } catch (err) {
+      console.log("Gagal terhubung ke server, menggunakan mode offline lokal.");
+      renderAllUI();
+    }
+  }
+
+  // Fungsi untuk mengirim dan menyimpan data pemain secara permanen ke Supabase
+  async function savePlayerToServer() {
+    try {
+      await fetch(`${BACKEND_URL}/api/save-player`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegramId, coins: userCoins, atf: userAtf, inventory, plots })
+      });
+    } catch (err) {
+      console.log("Gagal menyimpan data ke server.");
+    }
+  }
+
   const translations = {
     en: {
       profileName: "Player",
@@ -1147,6 +1191,7 @@
     userAtf += friend.rewardAtf;
     walletHistory.unshift(`Referral Bonus: +${friend.rewardAtf} ATF`);
     renderAllUI();
+    savePlayerToServer();
     alert(currentLang === 'id' ? "Bonus referral berhasil diklaim!" : "Referral reward claimed successfully!");
   }
 
@@ -1163,6 +1208,7 @@
         userAtf += 1.00;
         walletHistory.unshift(`Converted 10,000 Coins -> 1.00 ATF`);
         renderAllUI();
+        savePlayerToServer();
         alert(currentLang === 'id' ? "Konversi berhasil!" : "Conversion successful!");
       } else {
         alert(currentLang === 'id' ? "Koin tidak cukup! Butuh 10.000 Koin." : "Not enough coins! Need 10,000 Coins.");
@@ -1174,7 +1220,6 @@
   function toggleTonConnect() {
     const t = translations[currentLang];
     if (!isWalletConnected) {
-      // Di aplikasi nyata, panggil: tonConnectUI.openModal();
       isWalletConnected = true;
       walletAddress = "EQD1...3x9a_Tonkeeper";
       userTon = 1.5;
@@ -1198,6 +1243,7 @@
       alert(currentLang === 'id' ? "Dompet diputus." : "Wallet disconnected.");
     }
     renderAllUI();
+    savePlayerToServer();
   }
 
   // Beli Lahan Lanjutan (Plot 2-9) via Mikro-TON (0.1 TON) atau Koin Game besar (5000 Koin)
@@ -1211,6 +1257,7 @@
         plots[index].unlocked = true;
         plots[index].status = 'empty';
         renderAllUI();
+        savePlayerToServer();
         alert(currentLang === 'id' ? "Lahan berhasil dibuka dengan Koin!" : "Plot unlocked using Coins!");
       } else {
         alert(currentLang === 'id' ? "Koin tidak cukup! Butuh 5.000 Koin." : "Not enough coins! Required: 5,000");
@@ -1225,6 +1272,7 @@
       plots[index].status = 'empty';
       walletHistory.unshift(`Unlocked Plot ${index+1} via 0.1 TON Gateway`);
       renderAllUI();
+      savePlayerToServer();
       alert(currentLang === 'id' ? "Pembayaran 0.1 TON sukses! Lahan dibuka." : "0.1 TON payment success! Plot unlocked.");
     }
   }
@@ -1268,6 +1316,7 @@
     walletHistory.unshift(`Withdraw Request ${num} ATF - [${queueNumber}] (Pending Review)`);
     
     renderAllUI();
+    savePlayerToServer();
     alert((currentLang === 'id' ? "Antrean penarikan berhasil dibuat!\nNo Antrean: " : "Withdrawal queued successfully!\nQueue No: ") + queueNumber + "\nAdmin will review and transfer within 24 hours.");
   }
 
@@ -1342,7 +1391,6 @@
     }
   }
 
-  // Logika Pembelian via Endpoint Server API (Simulasi Terhubung ke Backend)
   function buyItemServer(itemType, costCoins) {
     if (userCoins >= costCoins) {
       userCoins -= costCoins;
@@ -1352,6 +1400,7 @@
 
       transactionHistory.unshift(`Bought 1x ${itemType} for ${costCoins} Coins`);
       renderAllUI();
+      savePlayerToServer();
       alert(currentLang === 'id' ? `Berhasil membeli 1x ${itemType}!` : `Successfully purchased 1x ${itemType}!`);
     } else {
       alert(currentLang === 'id' ? "Koin Game tidak cukup!" : "Insufficient Game Coins!");
@@ -1363,11 +1412,11 @@
       inventory.seed += 1;
       inventory.hasClaimedFree = true;
       renderAllUI();
+      savePlayerToServer();
       alert(currentLang === 'id' ? "Berhasil! Mendapatkan 1 Bibit Apel Gratis." : "Success! Received 1 Free Apple Seed.");
     }
   }
 
-  // Tanam Bibit menggunakan Waktu Server (Anti-Cheat Jam HP)
   function plantSeed(index) {
     if (inventory.seed <= 0) {
       alert(currentLang === 'id' ? "Bibit habis! Klaim gratis atau beli di Pasar." : "No seeds left! Claim free seed or buy in Market.");
@@ -1375,21 +1424,21 @@
     }
     inventory.seed -= 1;
     plots[index].status = 'growing';
-    // Waktu panen dicatat berdasarkan waktu epoch server (Date.now() + durasi)
     plots[index].harvestTime = Date.now() + (plots[index].totalDuration * 1000);
     renderAllUI();
+    savePlayerToServer();
   }
 
   function useWater(index) {
     if (inventory.water > 0) {
       inventory.water -= 1;
-      // Mengurangi waktu panen sebanyak 30 menit (1800 detik)
       plots[index].harvestTime -= (1800 * 1000);
       if (plots[index].harvestTime <= Date.now()) {
         plots[index].harvestTime = Date.now();
         plots[index].status = 'ready';
       }
       renderAllUI();
+      savePlayerToServer();
       alert(currentLang === 'id' ? "Air digunakan! Waktu berkurang 30 menit." : "Water applied! Time reduced by 30 mins.");
     } else {
       alert(currentLang === 'id' ? "Stok air habis!" : "Water stock is empty!");
@@ -1399,20 +1448,19 @@
   function useFertilizer(index) {
     if (inventory.fertilizer > 0) {
       inventory.fertilizer -= 1;
-      // Mengurangi waktu panen sebanyak 30 detik
       plots[index].harvestTime -= (30 * 1000);
       if (plots[index].harvestTime <= Date.now()) {
         plots[index].harvestTime = Date.now();
         plots[index].status = 'ready';
       }
       renderAllUI();
+      savePlayerToServer();
       alert(currentLang === 'id' ? "Pupuk digunakan! Waktu berkurang 30 detik." : "Fertilizer applied! Time reduced by 30 secs.");
     } else {
       alert(currentLang === 'id' ? "Stok pupuk habis!" : "Fertilizer stock is empty!");
     }
   }
 
-  // Panen menghasilkan Koin Game, bukan ATF langsung (Menjaga Ekosistem Ekonomi)
   function harvestPlot(index) {
     inventory.harvestedApples += 1;
     plots[index].status = 'empty';
@@ -1420,6 +1468,7 @@
     
     transactionHistory.unshift(`Harvested 1 Apple (+1 Apple in Inventory)`);
     renderAllUI();
+    savePlayerToServer();
     alert(currentLang === 'id' ? "Panen Berhasil! 1 Apel disimpan di inventaris. Pergi ke Market -> Sell untuk menukarnya dengan Koin Game." : "Harvest Successful! 1 Apple stored. Go to Market -> Sell to exchange for Game Coins.");
   }
 
@@ -1432,13 +1481,13 @@
       
       transactionHistory.unshift(`Sold ${count} Apples for ${earnedCoins} Coins`);
       renderAllUI();
+      savePlayerToServer();
       alert(currentLang === 'id' ? `Berhasil menjual ${count} Apel! +${earnedCoins} Koin Game ditambahkan.` : `Sold ${count} Apples! +${earnedCoins} Game Coins added.`);
     } else {
       alert(currentLang === 'id' ? "Tidak ada apel untuk dijual di inventaris!" : "No harvested apples in inventory to sell!");
     }
   }
 
-  // Render Grid Farm berbasis Server Timestamp
   function renderFarm() {
     farmGridEl.innerHTML = '';
     const now = Date.now();
@@ -1518,7 +1567,6 @@
     });
   }
 
-  // Validasi Misi Tugas (Integrasi Telegram getChatMember API dari Backend)
   function handleTaskAction(taskId) {
     let task = tasks.find(t => t.id === taskId);
     if (!task || task.completed) return;
@@ -1532,6 +1580,7 @@
         walletHistory.unshift(`Completed Task: ${task.title} (+${task.rewardCoins} Coins, +${task.rewardAtf} ATF)`);
         alert(`Success! +${task.rewardCoins} Coins & +${task.rewardAtf} ATF`);
         renderAllUI();
+        savePlayerToServer();
         renderTasks();
       }
     } else if (task.type === 'harvest') {
@@ -1541,6 +1590,7 @@
       walletHistory.unshift(`Completed Task: ${task.title}`);
       alert(`Success! +${task.rewardCoins} Coins & +${task.rewardAtf} ATF`);
       renderAllUI();
+      savePlayerToServer();
       renderTasks();
     } else if (task.type === 'invite') {
       alert(currentLang === 'id' ? "Misi ini mensyaratkan teman yang diundang harus mencapai minimal 5x panen (Anti-Sybil)." : "This task requires your referred friend to reach at least 5 harvests (Sybil Protected).");
@@ -1551,6 +1601,7 @@
       walletHistory.unshift(`Completed Task: ${task.title}`);
       alert(`Success! +${task.rewardCoins} Coins & +${task.rewardAtf} ATF`);
       renderAllUI();
+      savePlayerToServer();
       renderTasks();
     }
   }
@@ -1588,7 +1639,6 @@
     });
   }
 
-  // Timer interval UI untuk memperbarui hitung mundur secara halus
   setInterval(() => {
     renderFarm();
   }, 1000);
@@ -1620,7 +1670,8 @@
     }
   }
 
-  renderAllUI();
+  // Memuat data pemain dari database server saat game pertama kali dibuka
+  loadPlayerFromServer();
 </script>
 
 </body>
