@@ -7,6 +7,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Tambahkan baris ini agar saat URL utama dibuka, tidak muncul "Cannot GET /"
+app.get('/', (req, res) => {
+  res.send('ATFarmBot Backend is Running Smoothly! 🚀');
+});
+
 // Masukkan Kredensial Supabase Anda di sini (ambil dari Project Settings -> API Supabase)
 const SUPABASE_URL = 'https://qsbdxllnsejngubrxexb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzYmR4bGxuc2Vqbmd1YnJ4ZXhiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NzE0MjA2NCwiZXhwIjoyMTAyNzE4MDY0fQ.8qnCMiRnJ7YWnitWrrOQUg0lW8Gekih70tv1_yXsLjw';
